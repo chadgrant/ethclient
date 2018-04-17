@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>Simple Block Explorer</title>
+        <style type="text/css">
+            body {
+                margin:30px;
+            }
+            * {
+                font:12pt arial;
+            }
+            div {
+                margin: 5px;
+            }
+        </style>
+        <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>        
+        <script>
+            var tmpl, mem = {};
+
+            $(document).ready(function(){
+                tmpl = $("#template").clone();
+                tmpl.removeAttr("id");
+                $("#template").remove();
+            });
+
+            $(document).on("click","div.blocknum",function(){
+                $(this).parent().find(".transactions").toggle();
+            })
+            
+            function getBlocks() {
+                $.get({
+                    url :"/blocks",
+                    success: function(blocks) {
+                            if (blocks) {
+                                $.each(blocks, function(){
+                                    if (!mem[this.Block]) {
+                                        var item = tmpl.clone();
+                                        $(".blocknum",item).text("# " + this.Block)
+                                        $.each(this.Transactions,function(){
+                                            $(".transactions ul",item).append('<li><a href="https://etherscan.io/tx/' + this + '" target="etherscan">' + this + '</a></li>');
+                                        })     
+                                        $("#blocks").append(item)
+                                        mem[this.Block] = true;
+                                    }
+                                })
+                            }   
+                    }
+                })
+            }
+
+            setInterval(getBlocks,3000)
+        </script>
+    </head>
+    <body>
+        <h1>Simple Block Explorer</h1>
+        <hr/>
+        <h2>Click any block number to view the transactions in block</h2>
+        <div id="blocks"></div>
+        <div id="template" style="cursor:pointer;">
+            <div class="blocknum"></div>
+            <div class="transactions" style="display:none;">
+                <ul></ul>
+            </div>
+        </div>
+    </body>
+</html>
