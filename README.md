@@ -22,7 +22,7 @@ docker build -t chadgrant/ethclient .
 docker run -itp 8080:8080 --rm --env-file docker.env chadgrant/ethclient
 ```
 
-##Building / Running locally
+## Building / Running locally
 ```
 export HTTP_PORT=8080
 export ENVIRONMENT=mainnet
